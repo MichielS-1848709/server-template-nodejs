@@ -17,6 +17,14 @@ class Account extends Model {
             name: {
                 type: Sequelize.STRING(25),
                 allowNull: false
+            },
+            createdAt: {
+                type: Sequelize.DATE,
+                defaultValue: Date.now()
+            },
+            updatedAt: {
+                type: Sequelize.DATE,
+                defaultValue: Date.now()
             }
 
         }, {modelName: 'account', sequelize});
