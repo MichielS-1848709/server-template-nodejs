@@ -5,7 +5,7 @@ const sequelize = new Sequelize(process.env.PGDATABASE, process.env.PGUSER, proc
     dialect: 'postgres',
     pool: {
         max: 5,
-        acquire:50.000,
+        acquire: 1000000,
         idle: 10.000
     }
 });
