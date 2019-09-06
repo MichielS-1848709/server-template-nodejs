@@ -1,7 +1,7 @@
-const { Account } = require('../models/index');
+const { Account: AccountController } = require('../models/model');
 
 module.exports.fetchAll = (req, res) => {
-    Account.findAll()
+    AccountController.findAll()
         .then(accounts => {
             const status = accounts == null ? 404 : 200;
             res.status(status).send({
@@ -21,7 +21,7 @@ module.exports.fetchAll = (req, res) => {
 
 module.exports.fetch = (req, res) => {
     const accountID = req.params.id;
-    Account.findByPk(accountID)
+    AccountController.findByPk(accountID)
         .then(account => {
             const status = account == null ? 404 : 200;
             res.status(status).send({
@@ -40,7 +40,16 @@ module.exports.fetch = (req, res) => {
 };
 
 module.exports.add = (req, res) => {
-    Account.create({name: req.body.name, email: req.body.email})
+    const account = req.body;
+
+    if(!account.email || !account.name)
+        return res.status(404).send({
+            status: 'error',
+            data: null,
+            message: 'Required parameters not provided'
+        });
+
+    AccountController.create({name: req.body.name, email: req.body.email})
         .then(account => {
             res.status(201).send({
                 status: 'success',
@@ -61,7 +70,14 @@ module.exports.modify = (req, res) => {
     const accountID = req.params.id;
     const accountModification = req.body.account;
 
-    Account.update(accountModification, {returning: true, where: {id: accountID}})
+    if(!accountModification)
+        return res.status(404).send({
+            status: 'error',
+            data: null,
+            message: 'Required parameters not provided'
+        });
+
+    AccountController.update(accountModification, {returning: true, where: {id: accountID}})
         .then(([accountID, [newAccount]]) => {
             const statusCode = newAccount == null ? 404 : 200;
             const statusMessage = newAccount == null ? 'fail' : 'success';
@@ -84,7 +100,7 @@ module.exports.modify = (req, res) => {
 module.exports.delete = (req, res) => {
     const accountID = req.params.id;
 
-    Account.destroy({where: {id: accountID}})
+    AccountController.destroy({where: {id: accountID}})
         .then(accountsDeleted => {
             const statusCode = accountsDeleted === 0 ? 404 : 200;
             const statusMessage = accountsDeleted === 0 ? 'fail' : 'success';
@@ -102,4 +118,8 @@ module.exports.delete = (req, res) => {
                 message: 'Internal Server Error'
             });
         });
+};
+
+module.exports.authenticate = (req, res) => {
+    res.status(200).send('Authenticated');
 };

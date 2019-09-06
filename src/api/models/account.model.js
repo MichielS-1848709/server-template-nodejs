@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const Model = Sequelize.Model;
 
-class Account extends Model {
+class AccountModel extends Model {
     static init(sequelize, DataTypes) {
         return super.init({
             id: {
@@ -29,6 +29,10 @@ class Account extends Model {
 
         }, {modelName: 'account', sequelize});
     }
+
+    validatePassword(password) {
+        console.log('Validating password', password);
+    }
 }
 
-module.exports = Account;
+module.exports = AccountModel;
