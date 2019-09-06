@@ -72,7 +72,7 @@ module.exports.modify = (req, res) => {
                 message: null
             });
         })
-        .catch((error) => {
+        .catch(() => {
             res.status(500).send({
                 status: 'error',
                 data: null,
@@ -84,7 +84,7 @@ module.exports.modify = (req, res) => {
 module.exports.delete = (req, res) => {
     const accountID = req.params.id;
 
-    Account.destroy({returning: true, where: {id: accountID}})
+    Account.destroy({where: {id: accountID}})
         .then(accountsDeleted => {
             const statusCode = accountsDeleted === 0 ? 404 : 200;
             const statusMessage = accountsDeleted === 0 ? 'fail' : 'success';
@@ -95,7 +95,7 @@ module.exports.delete = (req, res) => {
                 message: null
             });
         })
-        .catch((error) => {
+        .catch(() => {
             res.status(500).send({
                 status: 'error',
                 data: null,
