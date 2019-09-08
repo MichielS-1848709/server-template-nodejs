@@ -1,7 +1,10 @@
-const { Account: AccountController } = require('../models/model');
+const { AccountModel } = require('../models/model');
+const { validate } = require('../middleware/parameterValidator');
+const jwt = require('jsonwebtoken');
+const fs = require('fs');
 
 module.exports.fetchAll = (req, res) => {
-    AccountController.findAll()
+    AccountModel.findAll()
         .then(accounts => {
             const status = accounts == null ? 404 : 200;
             res.status(status).send({
@@ -21,7 +24,7 @@ module.exports.fetchAll = (req, res) => {
 
 module.exports.fetch = (req, res) => {
     const accountID = req.params.id;
-    AccountController.findByPk(accountID)
+    AccountModel.findByPk(accountID)
         .then(account => {
             const status = account == null ? 404 : 200;
             res.status(status).send({
@@ -39,17 +42,15 @@ module.exports.fetch = (req, res) => {
         })
 };
 
-module.exports.add = (req, res) => {
-    const account = req.body;
 
-    if(!account.email || !account.name)
-        return res.status(404).send({
-            status: 'error',
-            data: null,
-            message: 'Required parameters not provided'
-        });
 
-    AccountController.create({name: req.body.name, email: req.body.email})
+module.exports.add = (req, res, next) => {
+
+    // Validate provided parameters
+    if(!validate(req, res)) return;
+
+    // Create new account
+    AccountModel.create({name: req.body.name, email: req.body.email, password: req.body.password})
         .then(account => {
             res.status(201).send({
                 status: 'success',
@@ -77,7 +78,7 @@ module.exports.modify = (req, res) => {
             message: 'Required parameters not provided'
         });
 
-    AccountController.update(accountModification, {returning: true, where: {id: accountID}})
+    AccountModel.update(accountModification, {returning: true, where: {id: accountID}})
         .then(([accountID, [newAccount]]) => {
             const statusCode = newAccount == null ? 404 : 200;
             const statusMessage = newAccount == null ? 'fail' : 'success';
@@ -100,7 +101,7 @@ module.exports.modify = (req, res) => {
 module.exports.delete = (req, res) => {
     const accountID = req.params.id;
 
-    AccountController.destroy({where: {id: accountID}})
+    AccountModel.destroy({where: {id: accountID}})
         .then(accountsDeleted => {
             const statusCode = accountsDeleted === 0 ? 404 : 200;
             const statusMessage = accountsDeleted === 0 ? 'fail' : 'success';
@@ -121,5 +122,33 @@ module.exports.delete = (req, res) => {
 };
 
 module.exports.authenticate = (req, res) => {
-    res.status(200).send('Authenticated');
+
+    // Validate provided parameters
+    if(!validate(req, res)) return;
+
+    // Authenticate account
+    AccountModel.findOne({where: { email: req.body.email }})
+        .then((account) => {
+
+            const payload = {
+                id: account.id,
+                name: account.name
+            };
+
+            const privateKey = fs.readFileSync(process.env.JWT_KEY_PATH, 'utf-8');
+
+            const signOptions = {
+                issuer: process.env.JWT_PROVIDER,
+                expiresIn: process.env.JWT_EXPIRATION,
+                algorithm: "RS256"
+            };
+
+            const token = jwt.sign(payload, privateKey, signOptions);
+
+            return res.status(200).send({
+                status: 'success',
+                data: { jwt: token},
+                message: null
+            });
+        });
 };

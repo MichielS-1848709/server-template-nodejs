@@ -8,12 +8,12 @@ const accountRoutes = require('./api/routes/account.route');
 
 /** Initialisation **/
 
-const localStrategy = require('./api/middleware/local.strategy');
+const jwtStrategy = require('./api/middleware/jwt.strategy');
 const app = express();
 app.use(passport.initialize());
 
 /** Middleware **/
-passport.use(localStrategy);
+passport.use(jwtStrategy);
 app.use(bodyParser.json({type: '*/*', limit:'2mb'}));
 
 

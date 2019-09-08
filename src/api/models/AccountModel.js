@@ -1,9 +1,10 @@
 const Sequelize = require('sequelize');
+const bcrypt = require('bcryptjs');
 const Model = Sequelize.Model;
 
 class AccountModel extends Model {
     static init(sequelize, DataTypes) {
-        return super.init({
+        super.init({
             id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
@@ -12,7 +13,15 @@ class AccountModel extends Model {
             },
             email: {
                 type: Sequelize.STRING(50),
-                allowNull: false
+                allowNull: false,
+                unique: true,
+                validate: {
+                    isEmail: true,
+                }
+            },
+            password: {
+                type: Sequelize.STRING(64),
+                allowNull: false,
             },
             name: {
                 type: Sequelize.STRING(25),
@@ -27,11 +36,20 @@ class AccountModel extends Model {
                 defaultValue: Date.now()
             }
 
-        }, {modelName: 'account', sequelize});
+        }, { modelName: 'account', sequelize });
+
+        this.addHook('beforeSave', account => {
+            if(account.password) {
+                const salt = bcrypt.genSaltSync(8);
+                account.password = bcrypt.hashSync(account.password, salt);
+            }
+        });
+
+        return this;
     }
 
     validatePassword(password) {
-        console.log('Validating password', password);
+        return bcrypt.compare(password, this.password)
     }
 }
 

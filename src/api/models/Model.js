@@ -13,7 +13,7 @@ const sequelize = new Sequelize(process.env.PGDATABASE, process.env.PGUSER, proc
 const AccountModel = require('./account.model');
 
 const models = {
-    Account: AccountModel.init(sequelize, Sequelize)
+    AccountModel: AccountModel.init(sequelize, Sequelize)
 };
 
 sequelize.sync().then(() => {
