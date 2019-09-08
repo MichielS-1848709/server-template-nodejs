@@ -4,7 +4,7 @@ const { scan } = require('../middleware/parameterValidator');
 
 const router = express.Router();
 
-const accountController = require('../controllers/account.controller');
+const accountController = require('../controllers/AccountController');
 
 router.get('/fetch/all', accountController.fetchAll);
 

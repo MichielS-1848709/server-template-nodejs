@@ -1,4 +1,4 @@
-const { AccountModel } = require('../models/model');
+const { AccountModel } = require('../models/Model');
 const { validate } = require('../middleware/parameterValidator');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');

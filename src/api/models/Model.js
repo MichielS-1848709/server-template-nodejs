@@ -10,7 +10,7 @@ const sequelize = new Sequelize(process.env.PGDATABASE, process.env.PGUSER, proc
     }
 });
 
-const AccountModel = require('./account.model');
+const AccountModel = require('./AccountModel');
 
 const models = {
     AccountModel: AccountModel.init(sequelize, Sequelize)
