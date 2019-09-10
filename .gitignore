@@ -3,8 +3,8 @@ bundle.js
 npm-debug.log
 .DS_Store
 nodemon.json
-.env
 /keys
+#.env
 
 # IntelliJ
 *.iml
