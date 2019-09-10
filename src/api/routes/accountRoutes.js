@@ -1,12 +1,12 @@
 const express = require('express');
-const passport = require('passport');
 const { scan } = require('../middleware/parameterValidator');
+const { verify } = require('../middleware/jwtValidator');
 
 const router = express.Router();
 
 const accountController = require('../controllers/AccountController');
 
-router.get('/fetch/all', accountController.fetchAll);
+router.get('/fetch/all', verify, accountController.fetchAll);
 
 router.get('/fetch/:id', accountController.fetch);
 
