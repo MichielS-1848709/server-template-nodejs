@@ -1,6 +1,5 @@
 const { verify } = require('../utils/jwtUtil');
 
-
 notAuthorized = (res) => {
     res.status(401).send({
         status: 'fail',
