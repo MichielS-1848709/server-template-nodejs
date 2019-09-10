@@ -1,7 +1,7 @@
 const { AccountModel } = require('../models/Model');
 const { validate } = require('../middleware/parameterValidator');
-const jwt = require('jsonwebtoken');
-const fs = require('fs');
+const { sign } = require('../utils/jwtUtil');
+
 
 module.exports.fetchAll = (req, res) => {
     AccountModel.findAll()
@@ -135,19 +135,9 @@ module.exports.authenticate = (req, res) => {
                 name: account.name
             };
 
-            const privateKey = fs.readFileSync(process.env.JWT_KEY_PATH, 'utf-8');
-
-            const signOptions = {
-                issuer: process.env.JWT_PROVIDER,
-                expiresIn: process.env.JWT_EXPIRATION,
-                algorithm: "RS256"
-            };
-
-            const token = jwt.sign(payload, privateKey, signOptions);
-
             return res.status(200).send({
                 status: 'success',
-                data: { jwt: token},
+                data: { jwt: sign(payload) },
                 message: null
             });
         });
