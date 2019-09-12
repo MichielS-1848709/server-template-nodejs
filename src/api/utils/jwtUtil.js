@@ -1,6 +1,10 @@
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 
+// Encryption & Decryption Tool
+const Cryptr = require('cryptr');
+const cryptr = new Cryptr(process.env.ENCRYPTION_SECRET);
+
 const privateKey = fs.readFileSync(process.env.JWT_PRIVATE_KEY_PATH, 'utf-8');
 const publicKey = fs.readFileSync(process.env.JWT_PUBLIC_KEY_PATH, 'utf-8');
 
@@ -12,7 +16,9 @@ module.exports.sign = (payload) => {
         algorithm: "RS256"
     };
 
-    return jwt.sign(payload, privateKey, signOptions);
+    const token = jwt.sign(payload, privateKey, signOptions);
+
+    return cryptr.encrypt(token);
 };
 
 module.exports.verify = (token) => {
@@ -22,14 +28,18 @@ module.exports.verify = (token) => {
         algorithm: "RS256"
     };
 
+    const decryptedToken = cryptr.decrypt(token);
+
     try{
-        return jwt.verify(token, publicKey, verifyOptions);
+        return jwt.verify(decryptedToken, publicKey, verifyOptions);
     } catch (err){
         return false;
     }
 };
 
 module.exports.decode = (token) => {
+    const decryptedToken = cryptr.decrypt(token);
+
     // Returns null when invalid
-    return jwt.decode(token, {complete: true});
+    return jwt.decode(decryptedToken, {complete: true});
 };
