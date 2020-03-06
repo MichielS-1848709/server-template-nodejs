@@ -1,6 +1,6 @@
 const { body } = require('express-validator');
-const { validationResult } = require('express-validator/check');
-const { AccountModel } = require('../models/Model');
+const { validationResult } = require('express-validator'); // /check before
+const { AccountModel } = require('../models/modelSetup');
 
 module.exports.scan = (method) => {
     switch(method) {

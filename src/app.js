@@ -2,7 +2,7 @@ const bodyParser = require('body-parser');
 const express = require ('express');
 
 /** Routes imports **/
-const accountRoutes = require('./api/routes/accountRoutes');
+const accountRoutes = require('./api/routes/userRoutes');
 
 /** Initialisation **/
 

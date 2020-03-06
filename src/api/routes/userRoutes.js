@@ -4,7 +4,7 @@ const { verify } = require('../middleware/jwtValidator');
 
 const router = express.Router();
 
-const accountController = require('../controllers/AccountController');
+const accountController = require('../controllers/userController');
 
 router.get('/fetch/all', accountController.fetchAll);
 

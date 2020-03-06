@@ -1,4 +1,4 @@
-const { AccountModel } = require('../models/Model');
+const { AccountModel } = require('../models/modelSetup');
 const { validate } = require('../middleware/parameterValidator');
 const { sign } = require('../utils/jwtUtil');
 

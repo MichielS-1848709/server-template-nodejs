@@ -2,7 +2,7 @@ const Sequelize = require('sequelize');
 const bcrypt = require('bcryptjs');
 const Model = Sequelize.Model;
 
-class AccountModel extends Model {
+class UserModel extends Model {
     static init(sequelize, DataTypes) {
         super.init({
             id: {
@@ -36,7 +36,7 @@ class AccountModel extends Model {
                 defaultValue: Date.now()
             }
 
-        }, { modelName: 'account', sequelize });
+        }, { modelName: 'users', sequelize });
 
         this.addHook('beforeSave', account => {
             if(account.password) {
@@ -53,4 +53,4 @@ class AccountModel extends Model {
     }
 }
 
-module.exports = AccountModel;
+module.exports = UserModel;
